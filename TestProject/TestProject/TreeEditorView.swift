@@ -22,7 +22,7 @@ struct TreeEditorView: View {
         VStack {
             HStack {
                 ScrollView {
-                    VStack {
+                    VStack(alignment: .leading) {
                         ForEach(treeManager.rootNodes) { root in
                             TreeNodeView(
                                 node: root,
@@ -41,7 +41,7 @@ struct TreeEditorView: View {
                 )
                 
                 ScrollView {
-                    VStack {
+                    VStack(alignment: .leading) {
                         ForEach(editor.rootNodes) { root in
                             TreeNodeView(
                                 node: root,
