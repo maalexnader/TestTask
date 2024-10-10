@@ -16,3 +16,8 @@ When a user deletes a node, the node and its descendants (recursively) are marke
 
 Every operation with a tree in the editor is added to the operation queue. When the user commits all changes, all
 operations from the queue are applied to the database one by one.
+
+
+
+https://github.com/user-attachments/assets/147da9c3-e571-440c-9377-0cac8a1636ea
+
