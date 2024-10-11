@@ -8,52 +8,52 @@
 import Foundation
 
 class MockedDb {
-    static var nodes = Set<DbNode>()
+    static var nodes = [DbNode]()
 
     static func populateDb() {
         // Adding the root node
         let id1 = UUID()
-        nodes.insert(DbNode.mock(id: id1, parentId: nil, name: 1))
+        nodes.append(DbNode.mock(id: id1, parentId: nil, name: 1))
 
         // Level 2
         let id2 = UUID()
-        nodes.insert(DbNode.mock(id: id2, parentId: id1, name: 2))
+        nodes.append(DbNode.mock(id: id2, parentId: id1, name: 2))
         let id3 = UUID()
-        nodes.insert(DbNode.mock(id: id3, parentId: id1, name: 3))
+        nodes.append(DbNode.mock(id: id3, parentId: id1, name: 3))
 
         // Level 3
         let id4 = UUID()
-        nodes.insert(DbNode.mock(id: id4, parentId: id2, name: 4))
+        nodes.append(DbNode.mock(id: id4, parentId: id2, name: 4))
         let id5 = UUID()
-        nodes.insert(DbNode.mock(id: id5, parentId: id2, name: 5))
+        nodes.append(DbNode.mock(id: id5, parentId: id2, name: 5))
         let id6 = UUID()
-        nodes.insert(DbNode.mock(id: id6, parentId: id3, name: 6))
+        nodes.append(DbNode.mock(id: id6, parentId: id3, name: 6))
         let id7 = UUID()
-        nodes.insert(DbNode.mock(id: id7, parentId: id3, name: 7))
+        nodes.append(DbNode.mock(id: id7, parentId: id3, name: 7))
 
         // Level 4
         let id8 = UUID()
-        nodes.insert(DbNode.mock(id: id8, parentId: id4, name: 8))
+        nodes.append(DbNode.mock(id: id8, parentId: id4, name: 8))
         let id9 = UUID()
-        nodes.insert(DbNode.mock(id: id9, parentId: id4, name: 0))
+        nodes.append(DbNode.mock(id: id9, parentId: id4, name: 0))
         let id10 = UUID()
-        nodes.insert(DbNode.mock(id: id10, parentId: id5, name: 10))
+        nodes.append(DbNode.mock(id: id10, parentId: id5, name: 10))
         let id11 = UUID()
-        nodes.insert(DbNode.mock(id: id11, parentId: id5, name: 11))
+        nodes.append(DbNode.mock(id: id11, parentId: id5, name: 11))
         let id12 = UUID()
-        nodes.insert(DbNode.mock(id: id12, parentId: id6, name: 12))
+        nodes.append(DbNode.mock(id: id12, parentId: id6, name: 12))
         let id13 = UUID()
-        nodes.insert(DbNode.mock(id: id13, parentId: id6, name: 13))
+        nodes.append(DbNode.mock(id: id13, parentId: id6, name: 13))
         let id14 = UUID()
-        nodes.insert(DbNode.mock(id: id14, parentId: id7, name: 14))
+        nodes.append(DbNode.mock(id: id14, parentId: id7, name: 14))
         let id15 = UUID()
-        nodes.insert(DbNode.mock(id: id15, parentId: id7, name: 15))
+        nodes.append(DbNode.mock(id: id15, parentId: id7, name: 15))
 
-        nodes.insert(DbNode.mock(id: UUID(), parentId: id8, name: 16))
-        nodes.insert(DbNode.mock(id: UUID(), parentId: id9, name: 17))
-        nodes.insert(DbNode.mock(id: UUID(), parentId: id10, name: 18))
-        nodes.insert(DbNode.mock(id: UUID(), parentId: id11, name: 19))
-        nodes.insert(DbNode.mock(id: UUID(), parentId: id12, name: 20))
+        nodes.append(DbNode.mock(id: UUID(), parentId: id8, name: 16))
+        nodes.append(DbNode.mock(id: UUID(), parentId: id9, name: 17))
+        nodes.append(DbNode.mock(id: UUID(), parentId: id10, name: 18))
+        nodes.append(DbNode.mock(id: UUID(), parentId: id11, name: 19))
+        nodes.append(DbNode.mock(id: UUID(), parentId: id12, name: 20))
     }
 }
 

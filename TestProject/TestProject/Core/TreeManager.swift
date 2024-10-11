@@ -14,7 +14,7 @@ final class TreeManager: ObservableObject {
     
     @Published var rootNodes: [TreeNode] = []
     
-    func build(nodes: Set<DbNode>) {
+    func build(nodes: [DbNode]) {
         nodesById = [:]
         rootNodes = []
         pendingChildren = [:]
@@ -24,7 +24,9 @@ final class TreeManager: ObservableObject {
             nodesById[treeNode.id] = treeNode
         }
 
-        for treeNode in nodesById.values {
+        for treeNode in nodesById.values.sorted(by: { lhs, rhs in
+            lhs.node.id < rhs.node.id
+        }) {
             attachNode(treeNode)
         }
     }
@@ -50,6 +52,39 @@ final class TreeManager: ObservableObject {
             let treeNode = TreeNode(node: node)
             nodesById[node.id] = treeNode
             attachNode(treeNode)
+        }
+    }
+    
+    func allDeletedNodes() -> [TreeNode] {
+        return nodesById.values.filter { $0.node.isDeleted }
+    }
+    
+    func update(with deleted: [UUID]) {
+        let deletedSet = Set(deleted)
+        for rootNode in rootNodes {
+            update(node: rootNode, deleted: deletedSet, parent: nil)
+        }
+    }
+
+    private func update(node: TreeNode, deleted: Set<UUID>, parent: TreeNode?) {
+        if deleted.contains(node.id) {
+            if let parentNode = parent {
+                for sibling in parentNode.children {
+                    if sibling.id != node.id {
+                        sibling.delete()
+                    }
+                }
+            } else {
+                for sibling in rootNodes {
+                    if sibling.id != node.id {
+                        sibling.delete()
+                    }
+                }
+            }
+        }
+
+        for child in node.children {
+            update(node: child, deleted: deleted, parent: node)
         }
     }
     

@@ -146,6 +146,9 @@ struct TreeEditorView: View {
                             }
                         }
                     }
+                    
+                    let deleted = treeManager.allDeletedNodes().map { $0.id }
+                    editor.update(with: deleted)
                 }) {
                     Text("Commit")
                         .font(.headline)
