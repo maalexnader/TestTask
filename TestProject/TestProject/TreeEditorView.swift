@@ -27,8 +27,7 @@ struct TreeEditorView: View {
                             TreeNodeView(
                                 node: root,
                                 tapAction: { node in
-                                    let parents = treeManager.parents(for: node.node.id)
-                                    editor.add(node: node.node, parents: parents)
+                                    editor.add(node: node.node)
                                 },
                                 selectedId: nil
                             )
@@ -143,11 +142,7 @@ struct TreeEditorView: View {
                                     nodeToUpdate.update(newValue: newValue)
                                 }
                             case .add(let node):
-                                if let parentId = node.parentId {
-                                    treeManager.add(node: node, parents: [parentId])
-                                } else {
-                                    treeManager.add(node: node, parents: [])
-                                }
+                                treeManager.add(node: node)
                             }
                         }
                     }

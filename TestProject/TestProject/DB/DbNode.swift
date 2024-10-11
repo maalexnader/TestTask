@@ -22,6 +22,6 @@ extension DbNode: Hashable {
 
 extension DbNode {
     func with(isDeleted: Bool) -> DbNode {
-        DbNode(id: self.id, parentId: self.parentId, value: self.value, isDeleted: isDeleted)
+        DbNode(id: id, parentId: parentId, value: value, isDeleted: isDeleted)
     }
 }
