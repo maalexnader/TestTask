@@ -29,21 +29,54 @@ final class TreeManager: ObservableObject {
         }
     }
     
+    func reset() {
+        nodesById = [:]
+        rootNodes = []
+        pendingChildren = [:]
+    }
+    
+    func parents(for id: UUID) -> [UUID] {
+        var currentNode = nodesById[id]
+        var parentIds: [UUID] = []
+        while let parentId = currentNode?.parentId {
+            parentIds.append(parentId)
+            currentNode = nodesById[parentId]
+        }
+        
+        return parentIds
+    }
+    
     func node(by id: UUID) -> TreeNode? {
         nodesById[id]
     }
     
-    func add(node: DbNode) {
+    func add(node: DbNode, parents: [UUID]) {
         guard nodesById[node.id] == nil else { return }
         
-        let treeNode = TreeNode(node: node)
-        nodesById[treeNode.id] = treeNode
+        var isDeleted = false
+        var parent = parents.first
+        var index = 0
+        
+        while parent != nil {
+            if let parentId = parent, let parentNode = nodesById[parentId] {
+                isDeleted = parentNode.node.isDeleted
+                if isDeleted {
+                    break
+                }
+            }
+            
+            index += 1
+            parent = index < parents.count ? parents[index] : nil
+        }
+        
+        let treeNode = TreeNode(node: node.with(isDeleted: isDeleted))
+        nodesById[node.id] = treeNode
         attachNode(treeNode)
     }
     
     func add(value: String, parentId: UUID) -> DbNode {
         let node: DbNode = .init(id: UUID(), parentId: parentId, value: value)
-        add(node: node)
+        add(node: node, parents: [parentId])
         return node
     }
     

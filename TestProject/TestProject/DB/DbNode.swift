@@ -19,3 +19,9 @@ extension DbNode: Hashable {
         hasher.combine(id)
     }
 }
+
+extension DbNode {
+    func with(isDeleted: Bool) -> DbNode {
+        DbNode(id: self.id, parentId: self.parentId, value: self.value, isDeleted: isDeleted)
+    }
+}

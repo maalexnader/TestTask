@@ -27,8 +27,10 @@ struct TreeEditorView: View {
                             TreeNodeView(
                                 node: root,
                                 tapAction: { node in
-                                    editor.add(node: node.node)
-                                }
+                                    let parents = treeManager.parents(for: node.node.id)
+                                    editor.add(node: node.node, parents: parents)
+                                },
+                                selectedId: nil
                             )
                         }
                     }
@@ -48,7 +50,8 @@ struct TreeEditorView: View {
                                 tapAction: { node in
                                     selectedNode = node
                                     editingValue = node.value
-                                }
+                                },
+                                selectedId: selectedNode?.id
                             )
                         }
                     }
@@ -68,6 +71,7 @@ struct TreeEditorView: View {
                         
                         TextField("Value", text: $editingValue)
                             .font(.title3)
+                            .disabled(selectedNode.node.isDeleted)
                         
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Add new node")
@@ -75,6 +79,7 @@ struct TreeEditorView: View {
                                 .foregroundStyle(Color.primary)
                             TextField("Value", text: $newNodeValue)
                                 .font(.title3)
+                                .disabled(selectedNode.node.isDeleted)
                             Button(action: {
                                 let newNode = editor.add(value: newNodeValue, parentId: selectedNode.id)
                                 operations.enqueue(.add(newNode))
@@ -84,6 +89,7 @@ struct TreeEditorView: View {
                                     .foregroundStyle(Color.green)
                                     .frame(maxWidth: .infinity)
                             }
+                            .disabled(selectedNode.node.isDeleted)
                         }
                         
                         HStack {
@@ -98,6 +104,7 @@ struct TreeEditorView: View {
                                     .foregroundStyle(Color.red)
                             }
                             .buttonStyle(.plain)
+                            .disabled(selectedNode.node.isDeleted)
                             
                             Button(action: {
                                 editor.update(node: selectedNode, withValue: editingValue)
@@ -108,6 +115,7 @@ struct TreeEditorView: View {
                                     .foregroundStyle(Color.blue)
                             }
                             .buttonStyle(.plain)
+                            .disabled(selectedNode.node.isDeleted)
                             
                             Spacer()
                         }
@@ -135,7 +143,11 @@ struct TreeEditorView: View {
                                     nodeToUpdate.update(newValue: newValue)
                                 }
                             case .add(let node):
-                                treeManager.add(node: node)
+                                if let parentId = node.parentId {
+                                    treeManager.add(node: node, parents: [parentId])
+                                } else {
+                                    treeManager.add(node: node, parents: [])
+                                }
                             }
                         }
                     }
@@ -143,6 +155,16 @@ struct TreeEditorView: View {
                     Text("Commit")
                         .font(.headline)
                         .foregroundStyle(.blue)
+                }
+                
+                Button(action: {
+                    treeManager.reset()
+                    editor.reset()
+                    treeManager.build(nodes: MockedDb.nodes)
+                }) {
+                    Text("Reset")
+                        .font(.headline)
+                        .foregroundStyle(.red)
                 }
             }
             .padding(.vertical, 24)
