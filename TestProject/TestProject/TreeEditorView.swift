@@ -82,6 +82,7 @@ struct TreeEditorView: View {
                             Button(action: {
                                 let newNode = editor.add(value: newNodeValue, parentId: selectedNode.id)
                                 operations.enqueue(.add(newNode))
+                                newNodeValue = ""
                             }) {
                                 Text("Add")
                                     .font(.title3)
