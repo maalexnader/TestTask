@@ -8,17 +8,21 @@
 import SwiftUI
 
 struct TreeEditorView: View {
-    @StateObject var treeManager = TreeManager()
-    @StateObject var editor = TreeManager()
-    
-    @State var operations = Queue<Operation>()
-    
-    @State var selectedNode: TreeNode?
-    
-    @State var editingValue: String = ""
-    @State var newNodeValue: String = ""
-    
-    var body: some View {
+	@State private var operations = Queue<Operation>()
+	
+	@State private var selectedNode: TreeNode?
+	@State private var editingValue: String = ""
+	@State private var newNodeValue: String = ""
+	
+	@StateObject private var treeManager: TreeManager
+	@StateObject private var editor: TreeManager
+	
+	init(makeProvider: @escaping () -> TreeManagerProvider) {
+		_treeManager = StateObject(wrappedValue: TreeManager(provider: makeProvider()))
+		_editor = StateObject(wrappedValue: TreeManager(provider: makeProvider()))
+	}
+	
+	var body: some View {
         VStack {
             HStack {
                 ScrollView {
@@ -131,25 +135,7 @@ struct TreeEditorView: View {
             
             HStack {
                 Button(action: {
-                    while !operations.isEmpty {
-                        if let operation = operations.dequeue() {
-                            switch operation {
-                            case .delete(let node):
-                                if let nodeToDelete = treeManager.node(by: node.id) {
-                                    treeManager.delete(node: nodeToDelete)
-                                }
-                            case .edit(let node, let newValue):
-                                if let nodeToUpdate = treeManager.node(by: node.id) {
-                                    nodeToUpdate.update(newValue: newValue)
-                                }
-                            case .add(let node):
-                                treeManager.add(node: node)
-                            }
-                        }
-                    }
-                    
-                    let deleted = treeManager.allDeletedNodes().map { $0.id }
-                    editor.update(with: deleted)
+					commit()
                 }) {
                     Text("Commit")
                         .font(.headline)
@@ -157,9 +143,7 @@ struct TreeEditorView: View {
                 }
                 
                 Button(action: {
-                    treeManager.reset()
-                    editor.reset()
-                    treeManager.build(nodes: MockedDb.nodes)
+					reset()
                 }) {
                     Text("Reset")
                         .font(.headline)
@@ -169,8 +153,36 @@ struct TreeEditorView: View {
             .padding(.vertical, 24)
         }
     }
+	
+	private func reset() {
+		treeManager.reset()
+		editor.reset()
+		treeManager.build(nodes: MockedDb.nodes)
+		selectedNode = nil
+	}
+	
+	private func commit() {
+		while !operations.isEmpty {
+			if let operation = operations.dequeue() {
+				switch operation {
+				case .delete(let node):
+					if let nodeToDelete = treeManager.node(by: node.id) {
+						treeManager.delete(node: nodeToDelete)
+					}
+				case .edit(let node, let newValue):
+					if let nodeToUpdate = treeManager.node(by: node.id) {
+						nodeToUpdate.update(newValue: newValue)
+					}
+				case .add(let node):
+					treeManager.add(node: node)
+				}
+			}
+		}
+
+		editor.update(with: treeManager.allDeletedNodes().map { $0.id })
+	}
 }
 
 #Preview {
-    TreeEditorView()
+	TreeEditorView(makeProvider: { TreeManagerProviderDefault() })
 }
